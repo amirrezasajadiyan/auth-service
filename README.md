@@ -1,61 +1,134 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🔐 Auth Service (Laravel 12 + JWT + Docker)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This service handles **user authentication** using **Laravel 12** and **JWT with RSA keys**. It provides endpoints for **registration**, **login**, **authenticated user data**, and **public key sharing** for secure communication with other services (e.g., `upload-service`).
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🛠 Tech Stack
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- Laravel 12  
+- PHP 8.4  
+- MySQL 8  
+- JWT (with RSA keys)  
+- Docker & Docker Compose  
+- PHPUnit for automated tests
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 🚀 Quick Start
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 1. Clone the project
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+```bash
+git clone https://your-repo-url/auth-service.git
+cd auth-service
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 2. Generate JWT keys (RSA)
 
-## Laravel Sponsors
+```bash
+mkdir keys
+openssl genpkey -algorithm RSA -out keys/jwt_private.key -pkeyopt rsa_keygen_bits:2048
+openssl rsa -pubout -in keys/jwt_private.key -out keys/jwt_public.key
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 3. Create `.env` file
 
-### Premium Partners
+```bash
+cp .env.example .env
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development/)**
-- **[Active Logic](https://activelogic.com)**
+Then configure the `.env` file:
 
-## Contributing
+```env
+APP_NAME=AuthService
+APP_URL=http://localhost:8000
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+DB_CONNECTION=mysql
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=auth_db
+DB_USERNAME=root
+DB_PASSWORD=root
 
-## Code of Conduct
+JWT_ALGO=RS256
+JWT_PRIVATE_KEY=file:///var/www/html/keys/jwt_private.key
+JWT_PUBLIC_KEY=file:///var/www/html/keys/jwt_public.key
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 4. Run with Docker Compose
 
-## Security Vulnerabilities
+```bash
+docker-compose up --build
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+This will:
 
-## License
+- Install Composer dependencies  
+- Run database migrations  
+- Run automated tests  
+- Start the Laravel development server on port `8000`
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+## 📡 API Endpoints
+
+| Method | Endpoint          | Middleware   | Description                  |
+|--------|-------------------|--------------|------------------------------|
+| POST   | `/api/register`   | –            | Register a new user          |
+| POST   | `/api/login`      | –            | Login and receive JWT token  |
+| GET    | `/api/me`         | `auth:api`   | Get current authenticated user |
+| GET    | `/api/public-key` | –            | Get the JWT RSA public key   |
+
+---
+
+## ✅ Run Tests
+
+To manually run the tests inside the container:
+
+```bash
+docker-compose exec auth-service php artisan test
+```
+
+---
+
+## 🔑 JWT Keys
+
+RSA keys used to sign and verify JWT tokens:
+
+- Keys directory: `keys/`
+- `jwt_private.key`: Used to **sign** the JWT
+- `jwt_public.key`: Used by other services to **verify** the token signature
+
+---
+
+## 📁 Project Structure (important files)
+
+```
+auth-service/
+├── app/
+│   └── Http/
+│       └── Controllers/
+│           └── AuthController.php
+├── routes/
+│   └── api.php
+├── keys/
+│   ├── jwt_private.key
+│   └── jwt_public.key
+├── Dockerfile
+├── docker-compose.yml
+├── tests/
+│   └── Feature/
+│       └── AuthTest.php
+```
+
+---
+
+## 🧪 Development Status
+
+- [x] User registration  
+- [x] User login  
+- [x] JWT generation with RSA private key  
+- [x] Public key sharing  
+- [x] Automated tests  
+- [ ] Integration with `upload-service` (in progress)
