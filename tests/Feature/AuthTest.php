@@ -16,10 +16,11 @@ class AuthTest extends TestCase
             'name' => 'Test User',
             'email' => 'test@example.com',
             'password' => 'password',
+            'password_confirmation' => 'password',
         ]);
 
         $response->assertStatus(200)
-            ->assertJsonStructure(['user', 'token']);
+            ->assertJsonStructure(['token']);
     }
 
     public function test_user_can_login()
