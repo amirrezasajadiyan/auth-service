@@ -23,7 +23,7 @@ class AuthController extends Controller
             $request->input('email'),
             $request->input('password')
         );
-        return response()->json($data);
+        return response()->json(array('token'=>$data));
     }
 
     public function login(LoginRequest $request): JsonResponse

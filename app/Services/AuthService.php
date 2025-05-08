@@ -21,8 +21,7 @@ readonly class AuthService
                 'password' => Hash::make($password),
             ]
         );
-        $token=JWTAuth::fromUser($user);
-        return response()->json(['token'=>$token]);
+        return JWTAuth::fromUser($user);
     }
     public function attemptLogin(array $credentials)
     {
