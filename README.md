@@ -20,7 +20,7 @@ This service handles **user authentication** using **Laravel 12** and **JWT with
 ### 1. Clone the project
 
 ```bash
-git clone https://your-repo-url/auth-service.git
+git clone https://github.com/amirrezasajadiyan/auth-service.git
 cd auth-service
 ```
 
