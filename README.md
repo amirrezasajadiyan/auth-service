@@ -129,11 +129,11 @@ auth-service/
 microservices-root/
 ├── auth-service/
 │ ├── Dockerfile
-│ ├── docker-compose.auth.yml
+│ 
 │ └── ...
 ├── upload-service/
 │ ├── Dockerfile
-│ ├── docker-compose.upload.yml
+│ 
 │ └── ...
 ├── docker-compose.yml ← connects both services together
 ```
