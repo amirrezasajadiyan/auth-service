@@ -1,5 +1,5 @@
 # Base image with PHP 8.4
-FROM php:8.4-fpm
+FROM php:8.4-cli
 
 # Set working directory
 WORKDIR /var/www/html
