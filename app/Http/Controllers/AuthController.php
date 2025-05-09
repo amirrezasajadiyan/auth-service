@@ -18,12 +18,12 @@ class AuthController extends Controller
 
     public function register(RegisterRequest $request): JsonResponse
     {
-        $data=$this->authService->register(
+        $data = $this->authService->register(
             $request->input('name'),
             $request->input('email'),
             $request->input('password')
         );
-        return response()->json(array('token'=>$data));
+        return response()->json(array('token' => $data));
     }
 
     public function login(LoginRequest $request): JsonResponse
@@ -31,7 +31,7 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
         $result = $this->authService->attemptLogin($credentials);
 
-        if (! $result['success']) {
+        if (!$result['success']) {
             return response()->json(['error' => $result['error']], $result['status']);
         }
 

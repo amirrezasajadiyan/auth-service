@@ -131,4 +131,4 @@ auth-service/
 - [x] JWT generation with RSA private key  
 - [x] Public key sharing  
 - [x] Automated tests  
-- [ ] Integration with `upload-service` (in progress)
+- [x] Integration with `upload-service` 
